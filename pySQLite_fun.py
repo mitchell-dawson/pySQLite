@@ -9,7 +9,7 @@ def create_connection(db_file):
     """
     try:
         conn = sqlite3.connect(db_file)
-        print 'connected to SQLite v%s' %sqlite3.version
+        print 'connected to SQLite v%s' % sqlite3.version
     except Error as e:
         print(e)
 
@@ -28,6 +28,8 @@ def create_table(conn, create_table_sql):
         c.execute(create_table_sql)
     except Error as e:
         print(e)
+
+    return create_table_sql
 
 
 def insert_ignore(conn, table, column_tuple, value_tuple, id_table):
@@ -59,11 +61,11 @@ def insert_ignore(conn, table, column_tuple, value_tuple, id_table):
     # find the ID of the insertion
     where_clause = ' AND '.join(["%s=?"]*len(column_tuple)) % column_tuple
 
-    sql = "SELECT %s FROM %s WHERE (" %(id_table, table) + where_clause + ");"
+    new_sql = "SELECT %s FROM %s WHERE (" %(id_table, table) + where_clause + ");"
 
-    last_row_id = int(conn.execute(sql, value_tuple).fetchone()[0])
+    last_row_id = int(conn.execute(new_sql, value_tuple).fetchone()[0])
 
-    return last_row_id
+    return last_row_id, sql, value_tuple, new_sql
 
 
 def update(conn, table, column_tuple, value_tuple, id_table, id_num):
@@ -98,6 +100,8 @@ def update(conn, table, column_tuple, value_tuple, id_table, id_num):
         sql += (" WHERE %s=%s" % (id_table, id_num))
 
     conn.execute(sql, value_tuple)
+
+    return sql, value_tuple
 
 
 def select(conn, sql):
@@ -152,6 +156,8 @@ def insert_many_rows(conn, table, column_tuple, value_tuple):
 
     conn.execute(sql, value_tuple)
 
+    return sql, value_tuple
+
 
 def add_column(conn, table_name, column_name, column_type):
     """
@@ -161,3 +167,5 @@ def add_column(conn, table_name, column_name, column_type):
         table_name, column_name, column_type)
 
     conn.execute(sql)
+
+    return sql
