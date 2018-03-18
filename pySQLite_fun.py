@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 import pdb
+import re
+
 
 
 def create_connection(db_file):
@@ -9,7 +11,7 @@ def create_connection(db_file):
     """
     try:
         conn = sqlite3.connect(db_file)
-        print 'connected to SQLite v%s' %sqlite3.version
+        print('connected to SQLite v%s' %sqlite3.version)
     except Error as e:
         print(e)
 
@@ -177,6 +179,27 @@ def select(conn, sql):
         results.append(row)
 
     return results
+
+
+def regexp_select(conn, sql, re_phrase):
+
+    """ perform a SELECT query with regexp
+    @param conn: connection object
+    @param sql: SQL SELECT statement 'SELECT bar FROM foo WHERE bar REGEXP ?'
+    @param re_phrase: regular expression phrase, string like 'Bromwyn'
+    """
+
+    def regexp(re_phrase, item):
+        reg = re.compile(re_phrase)
+        return reg.search(item) is not None
+
+    conn.create_function("REGEXP", 2, regexp)
+
+    cursor = conn.cursor()
+
+    cursor.execute(sql, (re_phrase,))
+
+    return cursor.fetchall()
 
 
 def insert_many_rows(conn, table, column_tuple, value_tuple):
