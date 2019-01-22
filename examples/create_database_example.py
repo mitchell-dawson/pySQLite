@@ -1,4 +1,4 @@
-import pySQLite_fun as SQL
+import pySQLite_fun as SQLite
 
 
 #########################
@@ -8,7 +8,7 @@ import pySQLite_fun as SQL
 database = "./dog_example.db"
 
 # create a database connection
-conn = SQL.create_connection(database)
+conn = SQLite.create_connection(database)
 
 #######################################
 # create the tables of the database ###
@@ -35,9 +35,9 @@ if conn is not None:
 
     for sql in create_table_sql:
 
-        SQL.create_table(conn, sql)
+        SQLite.create_table(conn, sql)
 
-    print "%s has been created" % database
+    print("%s has been created" % database)
 
 else:
     print("Error! cannot create the database connection.")

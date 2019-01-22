@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import pySQLite_fun as SQLite
 import os
-import cPickle as pickle
+import pickle
 import pdb
 import sys
 

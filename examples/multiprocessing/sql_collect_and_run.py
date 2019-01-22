@@ -1,13 +1,13 @@
 #!/usr/bin/python
 import pySQLite_fun as SQLite
 import os
-import cPickle as pickle
+import pickle
 import pdb
 
 
 def main():
 
-    db_nums = (4, 5, 6)
+    db_nums = (1, 2, 3)
 
     ROOT = "./"
 
