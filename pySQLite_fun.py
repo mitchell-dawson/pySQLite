@@ -5,13 +5,14 @@ import re
 
 
 
-def create_connection(db_file):
+def create_connection(db_file, silent=False):
     """create a database connection to a SQLite database:
     @param db_file: the path to an SQLite .db file
     """
     try:
         conn = sqlite3.connect(db_file)
-        print('connected to SQLite v%s' %sqlite3.version)
+        if not silent:
+            print('connected to SQLite v%s' %sqlite3.version)
     except Error as e:
         print(e)
 
@@ -63,7 +64,10 @@ def insert_ignore(conn, table, column_tuple, value_tuple, id_table):
 
     sql = "SELECT %s FROM %s WHERE (" % (id_table, table) + where_clause + ");"
 
-    last_row_id = int(conn.execute(sql, value_tuple).fetchone()[0])
+    try:
+        last_row_id = int(conn.execute(sql, value_tuple).fetchone()[0])
+    except TypeError:
+        last_row_id = None
 
     return last_row_id
 
@@ -271,7 +275,8 @@ def insert_many_rows_sql(table, column_tuple, value_tuple):
         sql = sql[:-2] + ';'
 
         # string out the valu_tuple
-        value_tuple = [element for tupl in value_tuple for element in tupl]
+        value_tuple = tuple(
+            [element for tupl in value_tuple for element in tupl])
 
     return (sql, value_tuple)
 
